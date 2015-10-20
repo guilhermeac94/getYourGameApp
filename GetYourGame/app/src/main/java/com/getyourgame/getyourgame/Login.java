@@ -10,12 +10,16 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
 import com.facebook.FacebookSdk;
+import com.facebook.GraphRequest;
+import com.facebook.GraphResponse;
 import com.facebook.Profile;
 import com.facebook.ProfileTracker;
+import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 import com.getyourgame.getyourgame.model.Usuario;
@@ -23,6 +27,8 @@ import com.getyourgame.getyourgame.util.Http;
 import com.getyourgame.getyourgame.util.Util;
 import com.getyourgame.getyourgame.util.Webservice;
 
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
@@ -36,12 +42,28 @@ public class Login extends AppCompatActivity {
     private FacebookCallback<LoginResult> mCallBack = new FacebookCallback<LoginResult>() {
         @Override
         public void onSuccess(LoginResult loginResult) {
-            /*
-            Profile profile = Profile.getCurrentProfile();
-            if(profile!=null){
-                redirecionar(profile.getName());
-            }
-            */
+
+            GraphRequest request = GraphRequest.newMeRequest(loginResult.getAccessToken(), new GraphRequest.GraphJSONObjectCallback() {
+                @Override
+                public void onCompleted(JSONObject jsonObject, GraphResponse graphResponse) {
+                    try {
+                        MultiValueMap<String, String> map = new LinkedMultiValueMap<String, String>();
+                        map.add("nome", jsonObject.getString("name"));
+                        map.add("email", jsonObject.getString("email"));
+                        map.add("senha", jsonObject.getString("id"));
+
+                        //new HttpCadastroFB((new Webservice()).cadastro(),map,Usuario.class,"").execute();
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+            Bundle params = new Bundle();
+            params.putString("fields","id,name,email");
+            request.setParameters(params);
+            request.executeAsync();
+
         }
 
         @Override
@@ -55,12 +77,36 @@ public class Login extends AppCompatActivity {
         }
     };
 
+    private class HttpCadastroFB extends Http {
+        public HttpCadastroFB(Webservice ws, MultiValueMap<String, String> map, Class classe, String apikey) {
+            super(ws, map, classe, apikey);
+        }
+
+        @Override
+        protected void onPostExecute(Object retorno) {
+            Usuario usuario = (Usuario) retorno;
+            if(!usuario.getError()) {
+                Intent intentPrincipal = new Intent(Login.this, CarregaCadastros.class);
+                Bundle param = new Bundle();
+                param.putString("nome", usuario.getNome());
+                intentPrincipal.putExtras(param);
+                startActivity(intentPrincipal);
+                util.toast(getApplicationContext(), "Usuário cadastrado com sucesso!");
+            }else{
+                util.msgDialog(Login.this, "Alerta", usuario.getMessage());
+            }
+        }
+    }
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         FacebookSdk.sdkInitialize(getApplicationContext());
         setContentView(R.layout.activity_login);
         mCallbackManager = CallbackManager.Factory.create();
+
+        //LoginManager.getInstance().logOut();
 
         final EditText etEmail = (EditText) findViewById(R.id.etEmail);
         final EditText etSenha = (EditText) findViewById(R.id.etSenha);
@@ -78,9 +124,6 @@ public class Login extends AppCompatActivity {
                 Usuario usuario = new Usuario();
                 Webservice ws = new Webservice();
                 new HttpCadastro(ws.login(),map,Usuario.class,"").execute();
-
-
-                //new HttpPostTask().execute(etEmail.getText().toString(), etSenha.getText().toString());
             }
         });
 
@@ -95,30 +138,39 @@ public class Login extends AppCompatActivity {
             }
         });
 
-        /*
-        Button btCadastrar = (Button) findViewById(R.id.btCadastrar);
-
-        btCadastrar.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View arg0) {
-
-                Intent tela1 = new Intent(Login.this, Cadastro.class);
-                startActivity(tela1);
-            }
-        });
-        */
 
         ProfileTracker profileTracker = new ProfileTracker() {
             @Override
             protected void onCurrentProfileChanged(Profile profile, Profile newProfile) {
-                if(newProfile!=null) {
-                    //redirecionar(newProfile.getName());
-                }
             }
         };
 
         LoginButton FBLoginButton = (LoginButton) findViewById(R.id.fb_login_button);
         FBLoginButton.registerCallback(mCallbackManager, mCallBack);
+
+
+        if(AccessToken.getCurrentAccessToken() != null) {
+            GraphRequest request2 = GraphRequest.newMeRequest(AccessToken.getCurrentAccessToken(), new GraphRequest.GraphJSONObjectCallback() {
+                @Override
+                public void onCompleted(JSONObject jsonObject, GraphResponse graphResponse) {
+                    try {
+                        MultiValueMap<String, String> map = new LinkedMultiValueMap<String, String>();
+                        map.add("nome", jsonObject.getString("name"));
+                        map.add("email", jsonObject.getString("email"));
+                        map.add("senha", jsonObject.getString("id"));
+
+                        //new HttpCadastroFB((new Webservice()).cadastro(), map, Usuario.class, "").execute();
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+            Bundle params2 = new Bundle();
+            params2.putString("fields", "id,name,email");
+            request2.setParameters(params2);
+            request2.executeAsync();
+        }
     }
 
 

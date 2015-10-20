@@ -42,15 +42,9 @@ public class Cadastro extends AppCompatActivity {
                 map.add("email",String.valueOf(etEmail.getText().toString()));
                 map.add("senha", String.valueOf(etSenha.getText().toString()));
 
-                Usuario usuario = new Usuario();
-                //usuario.setName(etNome.getText().toString());
-                //usuario.setEmail(etEmail.getText().toString());
-                //usuario.setSenha(etSenha.getText().toString());
                 Webservice ws = new Webservice();
-                //util.retornaMap(usuario);
 
                 new HttpCadastro(ws.cadastro(),map,Usuario.class,"").execute();
-                //new HttpPostTask().execute(etNome.getText().toString(), etEmail.getText().toString(), etSenha.getText().toString());
             }
         });
     }
