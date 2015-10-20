@@ -52,7 +52,7 @@ public class Login extends AppCompatActivity {
                         map.add("email", jsonObject.getString("email"));
                         map.add("senha", jsonObject.getString("id"));
 
-                        //new HttpCadastroFB((new Webservice()).cadastro(),map,Usuario.class,"").execute();
+                        new HttpCadastroFB((new Webservice()).cadastro(),map,Usuario.class,"").execute();
 
                     } catch (JSONException e) {
                         e.printStackTrace();
@@ -86,12 +86,7 @@ public class Login extends AppCompatActivity {
         protected void onPostExecute(Object retorno) {
             Usuario usuario = (Usuario) retorno;
             if(!usuario.getError()) {
-                Intent intentPrincipal = new Intent(Login.this, CarregaCadastros.class);
-                Bundle param = new Bundle();
-                param.putString("nome", usuario.getNome());
-                intentPrincipal.putExtras(param);
-                startActivity(intentPrincipal);
-                util.toast(getApplicationContext(), "Usuário cadastrado com sucesso!");
+                redirecionar(usuario.getId_usuario(),usuario.getChave_api(), CarregaCadastros.class);
             }else{
                 util.msgDialog(Login.this, "Alerta", usuario.getMessage());
             }
@@ -106,7 +101,7 @@ public class Login extends AppCompatActivity {
         setContentView(R.layout.activity_login);
         mCallbackManager = CallbackManager.Factory.create();
 
-        //LoginManager.getInstance().logOut();
+        LoginManager.getInstance().logOut();
 
         final EditText etEmail = (EditText) findViewById(R.id.etEmail);
         final EditText etSenha = (EditText) findViewById(R.id.etSenha);
@@ -123,7 +118,7 @@ public class Login extends AppCompatActivity {
 
                 Usuario usuario = new Usuario();
                 Webservice ws = new Webservice();
-                new HttpCadastro(ws.login(),map,Usuario.class,"").execute();
+                new HttpLogin(ws.login(),map,Usuario.class,"").execute();
             }
         });
 
@@ -155,11 +150,10 @@ public class Login extends AppCompatActivity {
                 public void onCompleted(JSONObject jsonObject, GraphResponse graphResponse) {
                     try {
                         MultiValueMap<String, String> map = new LinkedMultiValueMap<String, String>();
-                        map.add("nome", jsonObject.getString("name"));
                         map.add("email", jsonObject.getString("email"));
                         map.add("senha", jsonObject.getString("id"));
 
-                        //new HttpCadastroFB((new Webservice()).cadastro(), map, Usuario.class, "").execute();
+                        new HttpLoginFB((new Webservice()).login(), map, Usuario.class, "").execute();
 
                     } catch (JSONException e) {
                         e.printStackTrace();
@@ -173,17 +167,31 @@ public class Login extends AppCompatActivity {
         }
     }
 
-
-    private class HttpCadastro extends Http {
-        public HttpCadastro(Webservice ws, MultiValueMap<String, String> map, Class classe, String apiKey) {
-            super(ws, map, classe, apiKey);
+    private class HttpLoginFB extends Http {
+        public HttpLoginFB(Webservice ws, MultiValueMap<String, String> map, Class classe, String apikey) {
+            super(ws, map, classe, apikey);
         }
 
         @Override
         protected void onPostExecute(Object retorno) {
             Usuario usuario = (Usuario) retorno;
             if(!usuario.getError()) {
-                redirecionar(usuario.getId_usuario(), usuario.getChave_api());
+                redirecionar(usuario.getId_usuario(),usuario.getChave_api(), Principal.class);
+            }else{
+                util.msgDialog(Login.this, "Alerta", usuario.getMessage());
+            }
+        }
+    }
+
+    private class HttpLogin extends Http {
+        public HttpLogin(Webservice ws, MultiValueMap<String, String> map, Class classe, String apiKey) {
+            super(ws, map, classe, apiKey);
+        }
+        @Override
+        protected void onPostExecute(Object retorno) {
+            Usuario usuario = (Usuario) retorno;
+            if(!usuario.getError()) {
+                redirecionar(usuario.getId_usuario(), usuario.getChave_api(), CarregaCadastros.class);
             }else{
                 util.msgDialog(Login.this, "Alerta", usuario.getMessage());
             }
@@ -218,8 +226,8 @@ public class Login extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    private void redirecionar(int id_usuario, String apikey){
-        Intent intentPrincipal = new Intent(Login.this, CarregaCadastros.class);
+    private void redirecionar(int id_usuario, String apikey, Class destino){
+        Intent intentPrincipal = new Intent(Login.this, destino);
         Bundle param = new Bundle();
         param.putInt("id_usuario", id_usuario);
         param.putString("chave_api", apikey);
