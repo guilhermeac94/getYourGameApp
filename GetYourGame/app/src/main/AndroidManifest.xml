@@ -21,10 +21,7 @@
         <activity
             android:name=".Login"
             android:label="@string/app_name" >
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
+
         </activity>
         <activity
             android:name=".Cadastro"
@@ -33,6 +30,11 @@
         <activity
             android:name=".Principal"
             android:label="@string/title_activity_principal" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
         </activity>
         <activity
             android:name=".PreferenciaUsuario"
@@ -41,6 +43,10 @@
         <activity
             android:name=".CarregaCadastros"
             android:label="@string/title_activity_carrega_cadastros" >
+        </activity>
+        <activity
+            android:name=".ListaUsuarioJogo"
+            android:label="@string/title_activity_lista_usuario_jogo" >
         </activity>
     </application>
 

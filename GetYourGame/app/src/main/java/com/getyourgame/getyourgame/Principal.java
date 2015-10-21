@@ -5,19 +5,23 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.getyourgame.getyourgame.model.Usuario;
 import com.getyourgame.getyourgame.util.Http;
+import com.getyourgame.getyourgame.util.SwipeDetector;
 import com.getyourgame.getyourgame.util.Util;
 import com.getyourgame.getyourgame.util.Webservice;
 
-import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
-public class Principal extends AppCompatActivity {
+
+public class Principal extends AppCompatActivity{
 
     Util util = new Util();
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,7 +30,22 @@ public class Principal extends AppCompatActivity {
 
         final TextView tvBemBindo = (TextView) findViewById(R.id.tvBemVindo);
 
-        try{
+        View v = (RelativeLayout)this.findViewById(R.id.principal);
+        new SwipeDetector(v).setOnSwipeListener(new SwipeDetector.onSwipeEvent() {
+            @Override
+            public void SwipeEventDetected(View v, SwipeDetector.SwipeTypeEnum swipeType) {
+                if(swipeType==SwipeDetector.SwipeTypeEnum.LEFT_TO_RIGHT){
+
+                    Intent mainIntent = new Intent(Principal.this,
+                            ListaUsuarioJogo.class);
+                    startActivity(mainIntent);
+                    Principal.this.finish();
+                    overridePendingTransition(R.anim.slide_in_left,R.anim.slide_out_left);
+                }
+            }
+        });
+
+        /*try{
             Intent dadosRecebidos = getIntent();
 
             if(dadosRecebidos != null){
@@ -43,7 +62,7 @@ public class Principal extends AppCompatActivity {
 
                 //tvBemBindo.setText("Bem vindo, "+nome+"!");
             }
-        }catch(Exception e){}
+        }catch(Exception e){}*/
     }
 
     private class HttpCadastro extends Http {

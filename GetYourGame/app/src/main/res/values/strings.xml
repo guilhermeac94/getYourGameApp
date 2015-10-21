@@ -23,6 +23,7 @@
     <string name="title_activity_carrega_cadastros">CarregaCadastros</string>
 
     <string name="hello_world">Hello world!</string>
+    <string name="title_activity_lista_usuario_jogo">ListaUsuarioJogo</string>
 
 
 </resources>
