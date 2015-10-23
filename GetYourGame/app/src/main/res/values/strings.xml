@@ -21,6 +21,7 @@
     <string name="distancia">Distância considerada(km²):</string>
     <string name="distanciaProgresso">0</string>
     <string name="title_activity_carrega_cadastros">CarregaCadastros</string>
+    <string name="buscar">Buscar</string>
 
     <string name="hello_world">Hello world!</string>
     <string name="title_activity_lista_usuario_jogo">ListaUsuarioJogo</string>
