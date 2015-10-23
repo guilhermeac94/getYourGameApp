@@ -11,6 +11,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -19,6 +21,7 @@ import com.getyourgame.getyourgame.util.Http;
 import com.getyourgame.getyourgame.util.Util;
 import com.getyourgame.getyourgame.util.Webservice;
 
+import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
 import java.util.ArrayList;
@@ -31,16 +34,44 @@ public class ListaUsuario extends AppCompatActivity {
     ListView lvUsuarios;
     Ladapter adapter;
     ArrayList<Item> lista;
+    String filtro;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_lista_usuario);
+
+        Button btBuscarUsuario = (Button) findViewById(R.id.btBuscarUsuario);
+
+        btBuscarUsuario.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                carregaLista();
+            }
+        });
+        carregaLista();
+    }
+
+    public void carregaLista(){
+
+        EditText etBuscarUsuario = (EditText) findViewById(R.id.etBuscarUsuario);
+        filtro = String.valueOf(etBuscarUsuario.getText().toString());
+
         lista = new ArrayList();
         lvUsuarios  = (ListView) findViewById(R.id.lvUsuarios);
+
         Webservice ws = new Webservice();
-        new HttpBuscaUsuarios(ws.buscaUsuarios(),null,Object[].class,"").execute();
+
+        if(filtro.equals("")) {
+            new HttpBuscaUsuarios(ws.buscaUsuarios(), null, Object[].class, "").execute();
+
+        }else {
+            MultiValueMap<String, String> map = new LinkedMultiValueMap<String, String>();
+            map.add("filtro", filtro);
+            new HttpBuscaUsuarios(ws.buscaUsuarios(), map, Object[].class, "").execute();
+        }
     }
+
 
     private class HttpBuscaUsuarios extends Http {
         public HttpBuscaUsuarios(Webservice ws, MultiValueMap<String, String> map, Class classe, String apikey) {
@@ -54,10 +85,8 @@ public class ListaUsuario extends AppCompatActivity {
 
             for(Object obj : l){
                 Map<String, String> map = (Map<String, String>) obj;
-
                 lista.add(new Item(map.get("nome")));
             }
-
             adapter = new Ladapter(getApplicationContext());
             lvUsuarios.setAdapter(adapter);
         }
