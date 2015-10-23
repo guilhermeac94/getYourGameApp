@@ -54,4 +54,7 @@ public class Webservice {
     public Webservice buscaCadastros(){
         return new Webservice("cadastros", HttpMethod.GET, false);
     }
+    public Webservice buscaUsuarios(){
+        return new Webservice("usuarios", HttpMethod.GET, false);
+    }
 }

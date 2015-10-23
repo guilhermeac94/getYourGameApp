@@ -19,7 +19,7 @@ public class ListaUsuarioJogo extends TabActivity {
         TabHost.TabSpec tab1 = tabHost.newTabSpec("Usuário");
         TabHost.TabSpec tab2 = tabHost.newTabSpec("Jogo");
         tab1.setIndicator("Usuário");
-        tab1.setContent(new Intent(this, Login.class));
+        tab1.setContent(new Intent(this, ListaUsuario.class));
 
         tab2.setIndicator("Jogo");
         tab2.setContent(new Intent(this, Login.class));
