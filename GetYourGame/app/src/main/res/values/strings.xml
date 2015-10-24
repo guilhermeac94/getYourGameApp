@@ -26,6 +26,7 @@
     <string name="hello_world">Hello world!</string>
     <string name="title_activity_lista_usuario_jogo">ListaUsuarioJogo</string>
     <string name="title_activity_lista_usuario">ListaUsuario</string>
+    <string name="title_activity_lista_jogo">ListaJogo</string>
 
 
 </resources>

@@ -57,4 +57,7 @@ public class Webservice {
     public Webservice buscaUsuarios(){
         return new Webservice("usuarios", HttpMethod.POST, false);
     }
+    public Webservice buscaJogos(){
+        return new Webservice("jogos", HttpMethod.POST, false);
+    }
 }

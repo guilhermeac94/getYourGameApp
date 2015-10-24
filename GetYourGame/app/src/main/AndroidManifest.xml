@@ -50,7 +50,12 @@
         <activity
             android:name=".ListaUsuario"
             android:label="@string/title_activity_lista_usuario"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar">
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar" >
+        </activity>
+        <activity
+            android:name=".ListaJogo"
+            android:label="@string/title_activity_lista_jogo"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar" >
         </activity>
     </application>
 

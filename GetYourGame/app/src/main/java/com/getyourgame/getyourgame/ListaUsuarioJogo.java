@@ -22,7 +22,7 @@ public class ListaUsuarioJogo extends TabActivity {
         tab1.setContent(new Intent(this, ListaUsuario.class));
 
         tab2.setIndicator("Jogo");
-        tab2.setContent(new Intent(this, Login.class));
+        tab2.setContent(new Intent(this, ListaJogo.class));
 
         /** Add the tabs  to the TabHost to display. */
         tabHost.addTab(tab1);
