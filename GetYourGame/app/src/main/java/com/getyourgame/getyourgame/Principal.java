@@ -15,18 +15,23 @@ import com.getyourgame.getyourgame.util.SwipeDetector;
 import com.getyourgame.getyourgame.util.Util;
 import com.getyourgame.getyourgame.util.Webservice;
 
+import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
 
 public class Principal extends AppCompatActivity{
 
     Util util = new Util();
-
+    Integer id_usuario;
+    String chave_api;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_principal);
+
+        id_usuario = util.recebeIdUsuario(getIntent());
+        chave_api = util.recebeChaveApi(getIntent());
 
         final TextView tvBemBindo = (TextView) findViewById(R.id.tvBemVindo);
 
@@ -34,10 +39,12 @@ public class Principal extends AppCompatActivity{
         new SwipeDetector(v).setOnSwipeListener(new SwipeDetector.onSwipeEvent() {
             @Override
             public void SwipeEventDetected(View v, SwipeDetector.SwipeTypeEnum swipeType) {
-                if(swipeType==SwipeDetector.SwipeTypeEnum.LEFT_TO_RIGHT){
-
-                    Intent mainIntent = new Intent(Principal.this,
-                            ListaUsuarioJogo.class);
+                if (swipeType==SwipeDetector.SwipeTypeEnum.LEFT_TO_RIGHT){
+                    Intent mainIntent = new Intent(Principal.this,ListaUsuarioJogo.class);
+                    Bundle param = new Bundle();
+                    param.putInt("id_usuario", id_usuario);
+                    param.putString("chave_api", chave_api);
+                    mainIntent.putExtras(param);
                     startActivity(mainIntent);
                     Principal.this.finish();
                     overridePendingTransition(R.anim.slide_in_left,R.anim.slide_out_left);
@@ -45,24 +52,11 @@ public class Principal extends AppCompatActivity{
             }
         });
 
-        /*try{
-            Intent dadosRecebidos = getIntent();
-
-            if(dadosRecebidos != null){
-                Bundle recebe = dadosRecebidos.getExtras();
-                int id_usuario = recebe.getInt("id_usuario");
-                String apikey = recebe.getString("chave_api");
-
-                MultiValueMap<String, String> map = new LinkedMultiValueMap<String, String>();
-                map.add("id_usuario",String.valueOf(id_usuario));
-                Usuario usuario = new Usuario();
-                Webservice ws = new Webservice();
-                new HttpCadastro(ws.buscarUsuario(id_usuario),null,Usuario.class,apikey).execute();
-
-
-                //tvBemBindo.setText("Bem vindo, "+nome+"!");
-            }
-        }catch(Exception e){}*/
+        MultiValueMap<String, String> map = new LinkedMultiValueMap<String, String>();
+        map.add("id_usuario",String.valueOf(id_usuario));
+        Usuario usuario = new Usuario();
+        Webservice ws = new Webservice();
+        new HttpCadastro(ws.buscaUsuario(id_usuario),null,Usuario.class,chave_api).execute();
     }
 
     private class HttpCadastro extends Http {

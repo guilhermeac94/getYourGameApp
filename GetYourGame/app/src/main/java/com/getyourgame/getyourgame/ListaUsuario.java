@@ -3,6 +3,8 @@ package com.getyourgame.getyourgame;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -13,6 +15,7 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -35,6 +38,7 @@ public class ListaUsuario extends AppCompatActivity {
     Ladapter adapter;
     ArrayList<Item> lista;
     String filtro;
+    Bitmap sem_usuario;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,6 +46,7 @@ public class ListaUsuario extends AppCompatActivity {
         setContentView(R.layout.activity_lista_usuario);
 
         Button btBuscarUsuario = (Button) findViewById(R.id.btBuscarUsuario);
+        sem_usuario = BitmapFactory.decodeResource(getApplicationContext().getResources(), R.drawable.ic_user);
 
         btBuscarUsuario.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -85,7 +90,7 @@ public class ListaUsuario extends AppCompatActivity {
 
             for(Object obj : l){
                 Map<String, String> map = (Map<String, String>) obj;
-                lista.add(new Item(map.get("nome")));
+                lista.add(new Item(map.get("nome"), map.get("foto").equals("")?sem_usuario : util.StringToBitMap(map.get("foto"))));
             }
             adapter = new Ladapter(getApplicationContext());
             lvUsuarios.setAdapter(adapter);
@@ -116,9 +121,11 @@ public class ListaUsuario extends AppCompatActivity {
 
     class Item {
         String nome;
+        Bitmap foto;
 
-        Item(String name) {
+        Item(String name, Bitmap foto) {
             this.nome = name;
+            this.foto = foto;
         }
     }
 
@@ -152,10 +159,12 @@ public class ListaUsuario extends AppCompatActivity {
 
         class myViewHolder {
             TextView name;
+            ImageView foto;
 
             public myViewHolder(View v) {
                 // TODO Auto-generated constructor stub
                 name = (TextView) v.findViewById(R.id.tvNomeUsuario);
+                foto = (ImageView) v.findViewById(R.id.ivFotoUsuario);
             }
         }
 
@@ -177,6 +186,7 @@ public class ListaUsuario extends AppCompatActivity {
             }
 
             holder.name.setText(lista.get(position).nome);
+            holder.foto.setImageBitmap(lista.get(position).foto);
 
             if (holder.name.getText().toString().equals("")) {
                 holder.name.setVisibility(View.GONE);

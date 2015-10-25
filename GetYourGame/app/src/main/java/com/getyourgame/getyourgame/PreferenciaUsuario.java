@@ -1,6 +1,7 @@
 package com.getyourgame.getyourgame;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
@@ -34,6 +35,7 @@ public class PreferenciaUsuario extends AppCompatActivity {
     List<EstadoJogo> estados;
     List<MetodoEnvio> metodos;
     Integer id_usuario;
+    String chave_api;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,6 +43,7 @@ public class PreferenciaUsuario extends AppCompatActivity {
         setContentView(R.layout.activity_preferencia_usuario);
 
         id_usuario = util.recebeIdUsuario(getIntent());
+        chave_api = util.recebeChaveApi(getIntent());
 
         try {
             estados = db.selectEstadoJogo();
@@ -105,8 +108,17 @@ public class PreferenciaUsuario extends AppCompatActivity {
         @Override
         protected void onPostExecute(Object retorno) {
             Usuario usuario = (Usuario) retorno;
-            if(usuario.getMessage()!=null) {
-                System.out.println(usuario.getMessage());
+            if(!usuario.getError()) {
+                Intent intentPrincipal = new Intent(PreferenciaUsuario.this, Principal.class);
+                Bundle param = new Bundle();
+                param.putInt("id_usuario", id_usuario);
+                param.putString("chave_api", chave_api);
+                intentPrincipal.putExtras(param);
+                startActivity(intentPrincipal);
+                util.toast(PreferenciaUsuario.this, "Preferências salvas com sucesso!");
+                PreferenciaUsuario.this.finish();
+            }else{
+                util.msgDialog(PreferenciaUsuario.this, "Alerta", usuario.getMessage());
             }
         }
     }

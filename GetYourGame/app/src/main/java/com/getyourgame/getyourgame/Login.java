@@ -3,6 +3,7 @@ package com.getyourgame.getyourgame;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Base64;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -36,6 +37,8 @@ import org.springframework.util.MultiValueMap;
 public class Login extends AppCompatActivity {
 
     Util util = new Util();
+    MultiValueMap<String, String> FBmap;
+    Boolean mata_sessao = false;
 
     private CallbackManager mCallbackManager;
 
@@ -47,12 +50,13 @@ public class Login extends AppCompatActivity {
                 @Override
                 public void onCompleted(JSONObject jsonObject, GraphResponse graphResponse) {
                     try {
-                        MultiValueMap<String, String> map = new LinkedMultiValueMap<String, String>();
-                        map.add("nome", jsonObject.getString("name"));
-                        map.add("email", jsonObject.getString("email"));
-                        map.add("senha", jsonObject.getString("id"));
+                        FBmap = new LinkedMultiValueMap<String, String>();
+                        FBmap.add("nome", jsonObject.getString("name"));
+                        FBmap.add("email", jsonObject.getString("email"));
+                        FBmap.add("senha", jsonObject.getString("id"));
+                        String urlFoto = jsonObject.getJSONObject("picture").getJSONObject("data").getString("url");
 
-                        new HttpCadastroFB((new Webservice()).cadastro(),map,Usuario.class,"").execute();
+                        new HttpBuscaEmailFB((new Webservice()).buscaUsuarioEmail(jsonObject.getString("email")),null,Usuario.class,"").execute();
 
                     } catch (JSONException e) {
                         e.printStackTrace();
@@ -60,7 +64,7 @@ public class Login extends AppCompatActivity {
                 }
             });
             Bundle params = new Bundle();
-            params.putString("fields","id,name,email");
+            params.putString("fields","id,name,email,picture");
             request.setParameters(params);
             request.executeAsync();
 
@@ -76,6 +80,22 @@ public class Login extends AppCompatActivity {
 
         }
     };
+
+    private class HttpBuscaEmailFB extends Http {
+        public HttpBuscaEmailFB(Webservice ws, MultiValueMap<String, String> map, Class classe, String apikey) {
+            super(ws, map, classe, apikey);
+        }
+
+        @Override
+        protected void onPostExecute(Object retorno) {
+            Usuario usuario = (Usuario) retorno;
+            if(!usuario.getError()) {
+                redirecionar(usuario.getId_usuario(),usuario.getChave_api(), PreferenciaUsuario.class);
+            }else{
+                new HttpCadastroFB((new Webservice()).cadastro(),FBmap,Usuario.class,"").execute();
+            }
+        }
+    }
 
     private class HttpCadastroFB extends Http {
         public HttpCadastroFB(Webservice ws, MultiValueMap<String, String> map, Class classe, String apikey) {
@@ -101,7 +121,9 @@ public class Login extends AppCompatActivity {
         setContentView(R.layout.activity_login);
         mCallbackManager = CallbackManager.Factory.create();
 
-        LoginManager.getInstance().logOut();
+        if(mata_sessao) {
+            LoginManager.getInstance().logOut();
+        }
 
         final EditText etEmail = (EditText) findViewById(R.id.etEmail);
         final EditText etSenha = (EditText) findViewById(R.id.etSenha);

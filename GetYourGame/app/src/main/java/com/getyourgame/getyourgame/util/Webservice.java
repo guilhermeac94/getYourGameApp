@@ -32,15 +32,18 @@ public class Webservice {
     }
 
     public Webservice cadastro(){
-        return new Webservice("register", HttpMethod.POST, false);
+        return new Webservice("cadastro", HttpMethod.POST, false);
     }
 
     public Webservice login(){
         return new Webservice("login", HttpMethod.POST, false);
     }
 
-    public Webservice buscarUsuario(int id_usuario){
+    public Webservice buscaUsuario(int id_usuario){
         return new Webservice("usuario/"+id_usuario, HttpMethod.GET, true);
+    }
+    public Webservice buscaUsuarioEmail(String email){
+        return new Webservice("usuario_email/"+email, HttpMethod.GET, false);
     }
 
     public Webservice atualizarUsuario(int id_usuario){

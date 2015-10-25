@@ -24,6 +24,7 @@ public class CarregaCadastros extends AppCompatActivity {
     SQLiteHandler db = new SQLiteHandler(CarregaCadastros.this);
     Util util = new Util();
     Integer id_usuario;
+    String chave_api;
 
 
     @Override
@@ -32,6 +33,7 @@ public class CarregaCadastros extends AppCompatActivity {
         setContentView(R.layout.activity_carrega_cadastros);
 
         id_usuario = util.recebeIdUsuario(getIntent());
+        chave_api = util.recebeChaveApi(getIntent());
 
         carregaCadastros();
     }
@@ -72,6 +74,7 @@ public class CarregaCadastros extends AppCompatActivity {
             Intent intentPreferencia = new Intent(CarregaCadastros.this, PreferenciaUsuario.class);
             Bundle param = new Bundle();
             param.putInt("id_usuario", id_usuario);
+            param.putString("chave_api", chave_api);
             intentPreferencia.putExtras(param);
             startActivity(intentPreferencia);
 

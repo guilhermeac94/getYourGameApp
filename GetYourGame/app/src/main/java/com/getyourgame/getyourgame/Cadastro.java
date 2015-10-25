@@ -60,7 +60,8 @@ public class Cadastro extends AppCompatActivity {
             if(!usuario.getError()) {
                 Intent intentPrincipal = new Intent(Cadastro.this, CarregaCadastros.class);
                 Bundle param = new Bundle();
-                param.putString("nome", usuario.getNome());
+                param.putInt("id_usuario", usuario.getId_usuario());
+                param.putString("chave_api", usuario.getChave_api());
                 intentPrincipal.putExtras(param);
                 startActivity(intentPrincipal);
                 util.toast(getApplicationContext(), "Usuário cadastrado com sucesso!");
