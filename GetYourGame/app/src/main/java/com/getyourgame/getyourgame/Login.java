@@ -255,6 +255,6 @@ public class Login extends AppCompatActivity {
         param.putString("chave_api", apikey);
         intentPrincipal.putExtras(param);
         startActivity(intentPrincipal);
-        util.toast(getApplicationContext(), "Login efetuado com sucesso!");
+        util.toast(getApplicationContext(), "Login efetuado com sucesso!!!");
     }
 }
